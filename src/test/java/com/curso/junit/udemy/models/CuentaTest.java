@@ -42,4 +42,27 @@ public class CuentaTest {
         //Despues de comparar metodo equals por valor en lugar de referencia
         assertEquals(cuenta1, cuenta2);
     }
+
+    @Test
+    void testDebitoCuenta(){
+        //Given - teniendo una cuenta con saldo
+        Cuenta cuenta = new Cuenta("Luis", new BigDecimal("1000.17"));
+        //When - cuando descontamos un debito a nuestra cuenta
+        cuenta.debito(new BigDecimal(100));
+        //Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el saldo
+        assertNotNull(cuenta.getSaldo());
+        assertEquals(900, cuenta.getSaldo().intValue());
+    }
+  
+    @Test
+    void testCreditoCuenta(){
+        //Given - teniendo una cuenta con saldo
+        Cuenta cuenta = new Cuenta("Luis", new BigDecimal("1000.17"));
+        //When - cuando agregamos un credito a nuestra cuenta
+        cuenta.credito(new BigDecimal(100));
+        //Then - entonces asertamos que el salddo no sea nulo y si se haya agregado el saldo
+        assertNotNull(cuenta.getSaldo());
+        assertEquals(1100, cuenta.getSaldo().intValue());
+        assertEquals("1100.17", cuenta.getSaldo().toPlainString());
+    }
 }
