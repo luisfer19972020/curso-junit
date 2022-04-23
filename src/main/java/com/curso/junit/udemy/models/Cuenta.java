@@ -6,7 +6,6 @@ public class Cuenta {
     private String persona;
     private BigDecimal saldo;
 
-
     public Cuenta(String persona, BigDecimal saldo) {
         this.persona = persona;
         this.saldo = saldo;
@@ -26,6 +25,18 @@ public class Cuenta {
 
     public void setSaldo(BigDecimal saldo) {
         this.saldo = saldo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // PAra compar por valor y no por referencia en memoria
+        // Validamos que no haya nulos
+        if (!(o instanceof Cuenta) || this.saldo == null || this.persona == null) {
+            return false;
+        }
+        // Casteamos y comprobamos
+        Cuenta cuenta = (Cuenta) o;
+        return this.persona.equals(cuenta.getPersona()) && this.saldo.equals(cuenta.getSaldo());
     }
 
 }
