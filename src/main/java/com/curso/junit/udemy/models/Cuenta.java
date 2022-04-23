@@ -2,6 +2,8 @@ package com.curso.junit.udemy.models;
 
 import java.math.BigDecimal;
 
+import com.curso.junit.udemy.exceptions.DineroInsuficienteException;
+
 public class Cuenta {
     private String persona;
     private BigDecimal saldo;
@@ -27,11 +29,15 @@ public class Cuenta {
         this.saldo = saldo;
     }
 
-    public void debito(BigDecimal monto){
-        
-        this.saldo = this.saldo.subtract(monto);
+    public void debito(BigDecimal monto) {
+        BigDecimal nuevoSaldo = this.saldo.subtract(monto);
+        if (nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {// Si al descontar es menor a cero
+            throw new DineroInsuficienteException("Dinero Insuficiente!!!");
+        }
+        this.saldo = nuevoSaldo;
     }
-    public void credito(BigDecimal monto){
+
+    public void credito(BigDecimal monto) {
         this.saldo = this.saldo.add(monto);
     }
 
