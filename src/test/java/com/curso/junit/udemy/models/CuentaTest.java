@@ -3,6 +3,7 @@ package com.curso.junit.udemy.models;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.Properties;
 
 import com.curso.junit.udemy.exceptions.DineroInsuficienteException;
 
@@ -10,8 +11,18 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.JRE;
+import org.junit.jupiter.api.condition.OS;
+
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CuentaTest {
     Cuenta cuenta;
@@ -199,4 +210,57 @@ public class CuentaTest {
                                 .equals("John Doe")),
                         () -> "El  cliente no existe"));
     }
+
+    // Pruebas unitarias para que se ejecuten en ciertos Sistemas operativos o
+    // versiones de java o en ambiente de produccion o desarrollo
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void testWindows() {
+    }
+
+    @Test
+    @EnabledOnOs({ OS.LINUX, OS.MAC })
+    void testLinuxMac() {
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void testNoWindows() {
+    }
+
+    @Test
+    @EnabledOnJre(JRE.JAVA_8)
+    void testSoloJDK8() {
+    }
+
+    @Test
+    @DisabledOnJre(JRE.JAVA_8)
+    void testNoJDK8() {
+    }
+
+    @Test
+    @Disabled
+    void imprimirSystemProperties() {
+        Properties properties = System.getProperties();
+        properties.forEach((k, v) -> {
+            System.out.println(k + ":" + v);
+        });
+
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "java.specification.version", matches = "17")
+    public void testSoloJava17() {
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "user.country", matches = "MX")
+    public void testSoloMX() {
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = "os.arch", matches = ".*32.*")
+    public void testSolo64Bits() {
+    }
+
 }
