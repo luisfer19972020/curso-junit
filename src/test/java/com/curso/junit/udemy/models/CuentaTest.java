@@ -15,18 +15,18 @@ public class CuentaTest {
         Cuenta cuenta = new Cuenta("Luis", new BigDecimal("4200.23"));
         String esperado = "Luis";
         String real = cuenta.getPersona();
-        assertEquals(esperado, real);
-        assertTrue(real.equals("Luis"));
+        assertEquals(esperado, real, () -> "El nombre de la cuenta no es lo que se esperaba");
+        assertTrue(real.equals("Luis"), () -> "El nombre de la cuenta no es lo que se esperaba");
     }
 
     @Test
     void saldo_cuenta() {
         Cuenta cuenta = new Cuenta("Luis", new BigDecimal("4200.23"));
-        assertEquals(4200.23, cuenta.getSaldo().doubleValue());
-        assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0);// Valor saldo compare to con 0 sea -1(Simpre debe
-                                                                      // amyor igual a 0)
-        assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);// Valor saldo compare to con 0 sea -1(Simpre debe
-                                                                     // amyor igual a 0)
+        assertEquals(4200.23, cuenta.getSaldo().doubleValue(), () -> "El saldo de la cuenta no es el correcto");
+        // Valor saldo compare to con 0 sea -1(Simpre debe ser mayor igual a 0)
+        assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0, () -> "El saldo de la cuenta debe ser mayor a 0");
+        // Valor saldo compare to con 0 sea -1(Simpre debe mayor igual a 0)
+        assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0, () -> "El saldo de la cuenta debe ser mayor a 0");
     }
 
     @Test
@@ -42,7 +42,7 @@ public class CuentaTest {
         // assertNotEquals(cuenta1, cuenta2);
 
         // Despues de comparar metodo equals por valor en lugar de referencia
-        assertEquals(cuenta1, cuenta2);
+        assertEquals(cuenta1, cuenta2, "Los valores de las cuentas no son iguales");
     }
 
     @Test
@@ -53,8 +53,8 @@ public class CuentaTest {
         cuenta.debito(new BigDecimal(100));
         // Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el
         // saldo
-        assertNotNull(cuenta.getSaldo());
-        assertEquals(900, cuenta.getSaldo().intValue());
+        assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo");
+        assertEquals(900, cuenta.getSaldo().intValue(), () -> "El saldo de la cuenta no es correcto");
     }
 
     @Test
@@ -65,9 +65,9 @@ public class CuentaTest {
         cuenta.credito(new BigDecimal(100));
         // Then - entonces asertamos que el salddo no sea nulo y si se haya agregado el
         // saldo
-        assertNotNull(cuenta.getSaldo());
-        assertEquals(1100, cuenta.getSaldo().intValue());
-        assertEquals("1100.17", cuenta.getSaldo().toPlainString());
+        assertNotNull(cuenta.getSaldo(), () -> "El saldo no puede ser nulo");
+        assertEquals(1100, cuenta.getSaldo().intValue(), () -> "El saldo de la cuenta no es correcto");
+        assertEquals("1100.17", cuenta.getSaldo().toPlainString(), () -> "El saldo de la cuenta no es correcto");
     }
 
     @Test
@@ -80,8 +80,8 @@ public class CuentaTest {
         // mensaje adecuado
         Exception exception = assertThrows(DineroInsuficienteException.class, () -> {
             cuenta.debito(bigDecimal);
-        });
-        assertEquals("Dinero Insuficiente!!!", exception.getMessage());
+        }, () -> "No se lanzo la excepcion esperada");
+        assertEquals("Dinero Insuficiente!!!", exception.getMessage(), () -> "El mesaje de excepcion es incorrecto");
     }
 
     @Test
@@ -94,9 +94,11 @@ public class CuentaTest {
         // When - cuando transferimos 500 de la cuenta 2 a la cuenta 1
         banco.transferir(cuenta2, cuenta1, new BigDecimal(500));
         // Then - entonces tenemos las cantidades sumadas y restadas entre cuentas
-        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString());
-        assertEquals("3000", cuenta1.getSaldo().toPlainString());
-
+        assertAll(
+                () -> assertEquals("1000.8989", cuenta2.getSaldo().toPlainString(),
+                        () -> "El saldo de la cuenta no es correcto"),
+                () -> assertEquals("3000", cuenta1.getSaldo().toPlainString(),
+                        () -> "El saldo de la cuenta no es correcto"));
     }
 
     @Test
@@ -111,27 +113,58 @@ public class CuentaTest {
         banco.addCuenta(cuenta2);
         // Then - entonces tenemos las cuentas sumadas son la suma y que sus relaciones
         // sean inversas
-        assertEquals(2, banco.getCuentas().size());
-        assertEquals("Banorte", cuenta1.getBanco().getNombre());// Verificamos la relacion inversa
-        assertEquals("Luis", banco.getCuentas()// Asertamos que el cliente tenga cuenta
-                .stream()
-                .filter(cuenta -> cuenta
-                        .getPersona()
-                        .equals("Luis"))
-                .findFirst()
-                .get()
-                .getPersona());
-        assertTrue(banco.getCuentas()// Assertamos que este presente la cuenta
-                .stream()
-                .filter(cuenta -> cuenta
-                        .getPersona()
-                        .equals("Luis"))
-                .findFirst()
-                .isPresent());
-        assertTrue(banco.getCuentas()// Assertamos que este presente la cuenta[Mjor forma]
-                .stream()
-                .anyMatch(cuenta -> cuenta
-                .getPersona()
-                .equals("John Doe")));
+        // assertEquals(2, banco.getCuentas().size());
+        // assertEquals("Banorte", cuenta1.getBanco().getNombre());// Verificamos la
+        // relacion inversa
+        // assertEquals("Luis", banco.getCuentas()// Asertamos que el cliente tenga
+        // cuenta
+        // .stream()
+        // .filter(cuenta -> cuenta
+        // .getPersona()
+        // .equals("Luis"))
+        // .findFirst()
+        // .get()
+        // .getPersona());
+        // assertTrue(banco.getCuentas()// Assertamos que este presente la cuenta
+        // .stream()
+        // .filter(cuenta -> cuenta
+        // .getPersona()
+        // .equals("Luis"))
+        // .findFirst()
+        // .isPresent());
+        // assertTrue(banco.getCuentas()// Assertamos que este presente la cuenta[Mjor
+        // forma]
+        // .stream()
+        // .anyMatch(cuenta -> cuenta
+        // .getPersona()
+        // .equals("John Doe")));
+        // }
+        assertAll(
+                () -> assertEquals(2, banco.getCuentas().size(), () -> "El numero de cuentas es incorrecto"),
+                // Verificamos la relacion inversa,
+                () -> assertEquals("Banorte", cuenta1.getBanco().getNombre(),
+                        () -> "El nombre del banco es incorrecto"),
+                // Asertamos que el cliente tenga cuenta
+                () -> assertEquals("Luis", banco.getCuentas()
+                        .stream()
+                        .filter(cuenta -> cuenta
+                                .getPersona()
+                                .equals("Luis"))
+                        .findFirst()
+                        .get()
+                        .getPersona(), () -> "El nombre del cliente no existe en la lista"),
+                () -> assertTrue(banco.getCuentas()// Assertamos que este presente la cuenta
+                        .stream()
+                        .filter(cuenta -> cuenta
+                                .getPersona()
+                                .equals("Luis"))
+                        .findFirst()
+                        .isPresent(), () -> "El  cliente no existe"),
+                () -> assertTrue(banco.getCuentas()// Assertamos que este presente la cuenta[Mejor forma]
+                        .stream()
+                        .anyMatch(cuenta -> cuenta
+                                .getPersona()
+                                .equals("John Doe")),
+                        () -> "El  cliente no existe"));
     }
 }
