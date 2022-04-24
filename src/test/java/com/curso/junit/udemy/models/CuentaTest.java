@@ -76,41 +76,62 @@ public class CuentaTest {
         Cuenta cuenta = new Cuenta("Luis", new BigDecimal("1000.17"));
         // When - cuando intentamos sacar mas saldo del que tenemos a nuestra cuenta
         BigDecimal bigDecimal = new BigDecimal(1500);
-        // Then - Asertamos que recibimos una excepcion de dinero insuciente con el mensaje adecuado
+        // Then - Asertamos que recibimos una excepcion de dinero insuciente con el
+        // mensaje adecuado
         Exception exception = assertThrows(DineroInsuficienteException.class, () -> {
             cuenta.debito(bigDecimal);
         });
         assertEquals("Dinero Insuficiente!!!", exception.getMessage());
     }
 
-
     @Test
-    void testTrasferirDineroEntreCuentas(){
-        //Given - teniendo dos cuentas y un banco
+    void testTrasferirDineroEntreCuentas() {
+        // Given - teniendo dos cuentas y un banco
         Cuenta cuenta1 = new Cuenta("John Doe", new BigDecimal("2500"));
         Cuenta cuenta2 = new Cuenta("Luis", new BigDecimal("1500.8989"));
         Banco banco = new Banco();
         banco.setNombre("Banorte");
-        //When - cuando transferimos 500 de la cuenta 2 a la cuenta 1
-        banco.transferir(cuenta2, cuenta1,new BigDecimal(500));
-        //Then - entonces tenemos las cantidades sumadas y restadas entre cuentas
-        assertEquals("1000.8989",cuenta2.getSaldo().toPlainString());
-        assertEquals("3000",cuenta1.getSaldo().toPlainString());
+        // When - cuando transferimos 500 de la cuenta 2 a la cuenta 1
+        banco.transferir(cuenta2, cuenta1, new BigDecimal(500));
+        // Then - entonces tenemos las cantidades sumadas y restadas entre cuentas
+        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString());
+        assertEquals("3000", cuenta1.getSaldo().toPlainString());
 
     }
-    
+
     @Test
-    void testRelacionBancoCuenta(){
-        //Given - teniendo dos cuentas y un banco
+    void testRelacionBancoCuenta() {
+        // Given - teniendo dos cuentas y un banco
         Banco banco = new Banco();
         Cuenta cuenta1 = new Cuenta("John Doe", new BigDecimal("2500"));
         Cuenta cuenta2 = new Cuenta("Luis", new BigDecimal("1500.8989"));
         banco.setNombre("Banorte");
-        //When - cuando relacionamos las cuentas
+        // When - cuando relacionamos las cuentas
         banco.addCuenta(cuenta1);
         banco.addCuenta(cuenta2);
-        //Then - entonces tenemos las cuentas sumadas son la suma
-        assertEquals("2",banco.getCuentas().size());
-
+        // Then - entonces tenemos las cuentas sumadas son la suma y que sus relaciones
+        // sean inversas
+        assertEquals(2, banco.getCuentas().size());
+        assertEquals("Banorte", cuenta1.getBanco().getNombre());// Verificamos la relacion inversa
+        assertEquals("Luis", banco.getCuentas()// Asertamos que el cliente tenga cuenta
+                .stream()
+                .filter(cuenta -> cuenta
+                        .getPersona()
+                        .equals("Luis"))
+                .findFirst()
+                .get()
+                .getPersona());
+        assertTrue(banco.getCuentas()// Assertamos que este presente la cuenta
+                .stream()
+                .filter(cuenta -> cuenta
+                        .getPersona()
+                        .equals("Luis"))
+                .findFirst()
+                .isPresent());
+        assertTrue(banco.getCuentas()// Assertamos que este presente la cuenta[Mjor forma]
+                .stream()
+                .anyMatch(cuenta -> cuenta
+                .getPersona()
+                .equals("John Doe")));
     }
 }
