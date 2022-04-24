@@ -1,29 +1,15 @@
 package com.curso.junit.udemy.models;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Properties;
 
 import com.curso.junit.udemy.exceptions.DineroInsuficienteException;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.DisabledOnJre;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.JRE;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CuentaTest {
@@ -241,7 +227,7 @@ public class CuentaTest {
     }
 
     @Test
-    @Disabled
+    // @Disabled
     void imprimirSystemProperties() {
         Properties properties = System.getProperties();
         properties.forEach((k, v) -> {
@@ -265,11 +251,10 @@ public class CuentaTest {
     public void testSolo64Bits() {
     }
 
-    
     @Test
-    @Disabled
+    // @Disabled
     void imprimirVariablesAmbiente() {
-        Map<String,String> variables = System.getenv();
+        Map<String, String> variables = System.getenv();
         variables.forEach((k, v) -> {
             System.out.println(k + ":" + v);
         });
@@ -282,8 +267,37 @@ public class CuentaTest {
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(named = "NUMBER_OF_PROCESSORS",matches = "4")
-    void testOnly4Processors(){
+    @EnabledIfEnvironmentVariable(named = "NUMBER_OF_PROCESSORS", matches = "4")
+    void testOnly4Processors() {
     }
 
+    // Podemos ejecutar un test con una condicion por ejemplo que se ejecute un test
+    // solo si por ejemplo hay un servcio levantado o no
+    @Test
+    @DisplayName("El saldo de una cuenta siempre es mayor o igual a cero en W11")
+    void saldo_cuenta_w11() {
+        boolean esWindows11 = "Windows 11".equals(System.getProperty("os.name"));// os.name:Windows 11
+        assumeTrue(esWindows11);// Dependiendo de esto se ejecuta o se deshabilita el metodo
+        assertEquals(4200.23, cuenta.getSaldo().doubleValue(), () -> "El saldo de la cuenta no es el correcto");
+        // Valor saldo compare to con 0 sea -1(Simpre debe ser mayor igual a 0)
+        assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0, () -> "El saldo de la cuenta debe ser mayor a 0");
+        // Valor saldo compare to con 0 sea -1(Simpre debe mayor igual a 0)
+        assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0, () -> "El saldo de la cuenta debe ser mayor a 0");
+    }
+
+    // Asuminedo que si se cumpla algo ejecuta o no un trozo del test
+    @Test
+    @DisplayName("El saldo de una cuenta siempre es mayor o igual a cero en W11")
+    void saldo_cuenta_controlado_w11() {
+        boolean esWindows11 = "Windows 11".equals(System.getProperty("os.name"));// os.name:Windows 11
+        assumingThat(esWindows11, () -> {
+            assertEquals(4200.23, cuenta.getSaldo().doubleValue(), () -> "El saldo de la cuenta no es el correcto");
+            // Valor saldo compare to con 0 sea -1(Simpre debe ser mayor igual a 0)
+            assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0,
+                    () -> "El saldo de la cuenta debe ser mayor a 0");
+        });// Dependiendo de esto se ejecuta o se deshabilita el metodo
+        // Valor saldo compare to con 0 sea -1(Simpre debe mayor igual a 0)
+        assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0,
+                () -> "El saldo de la cuenta debe ser mayor a 0");
+    }
 }
