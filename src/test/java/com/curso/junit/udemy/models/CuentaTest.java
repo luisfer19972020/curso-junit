@@ -3,6 +3,7 @@ package com.curso.junit.udemy.models;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Properties;
 
 import com.curso.junit.udemy.exceptions.DineroInsuficienteException;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnJre;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -261,6 +263,27 @@ public class CuentaTest {
     @Test
     @DisabledIfSystemProperty(named = "os.arch", matches = ".*32.*")
     public void testSolo64Bits() {
+    }
+
+    
+    @Test
+    @Disabled
+    void imprimirVariablesAmbiente() {
+        Map<String,String> variables = System.getenv();
+        variables.forEach((k, v) -> {
+            System.out.println(k + ":" + v);
+        });
+
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "JAVA_HOME", matches = ".*jdk-17.0.1.12-hotspot.*")
+    void testEnMiJavaHome() {
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "NUMBER_OF_PROCESSORS",matches = "4")
+    void testOnly4Processors(){
     }
 
 }
