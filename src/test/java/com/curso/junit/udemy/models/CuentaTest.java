@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -11,6 +13,9 @@ import com.curso.junit.udemy.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -361,7 +366,7 @@ public class CuentaTest {
         @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
         @DisplayName("Una cuenta puede gestionar un debito")
         @ValueSource(strings = { "100", "200", "300", "500", "700", "1000" })
-        void test_debito_mayor_a_cero(String dato) {
+        void test_debito_value_source(String dato) {
             // Given - teniendo una cuenta con saldo
 
             // When - cuando descontamos un debito a nuestra cuenta
@@ -372,6 +377,58 @@ public class CuentaTest {
                     () -> assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo"),
                     () -> assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0,
                             () -> "El saldo de la cuenta no es correcto"));
+        }
+
+        @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
+        @DisplayName("Una cuenta puede gestionar un debito")
+        @CsvSource({ "1,100", "2,200", "3,300", "4,500", "5,700", "6,1000" })
+        void test_debito_csv_source(String index, String dato) {
+            // Given - teniendo una cuenta con saldo
+            System.out.println(index + "," + dato);
+            // When - cuando descontamos un debito a nuestra cuenta
+            cuenta.debito(new BigDecimal(dato));
+            // Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el
+            // saldo
+            assertAll(
+                    () -> assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo"),
+                    () -> assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0,
+                            () -> "El saldo de la cuenta no es correcto"));
+        }
+
+        @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
+        @DisplayName("Una cuenta puede gestionar un debito")
+        @CsvFileSource(resources = "/data.csv")
+        void test_debito_csvFile_source(String dato) {
+            // Given - teniendo una cuenta con saldo
+            System.out.println(dato);
+            // When - cuando descontamos un debito a nuestra cuenta
+            cuenta.debito(new BigDecimal(dato));
+            // Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el
+            // saldo
+            assertAll(
+                    () -> assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo"),
+                    () -> assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0,
+                            () -> "El saldo de la cuenta no es correcto"));
+        }
+
+        @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
+        @DisplayName("Una cuenta puede gestionar un debito")
+        @MethodSource("montList")
+        void test_debito_method_source(String dato) {
+            // Given - teniendo una cuenta con saldo
+            System.out.println(dato);
+            // When - cuando descontamos un debito a nuestra cuenta
+            cuenta.debito(new BigDecimal(dato));
+            // Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el
+            // saldo
+            assertAll(
+                    () -> assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo"),
+                    () -> assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0,
+                            () -> "El saldo de la cuenta no es correcto"));
+        }
+
+        private static List<String> montList(){
+            return Arrays.asList("100", "200", "300", "500", "700", "1000");
         }
     }
 }
