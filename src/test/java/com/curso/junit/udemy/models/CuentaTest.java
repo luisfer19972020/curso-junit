@@ -335,4 +335,22 @@ public class CuentaTest {
                     () -> "El saldo de la cuenta debe ser mayor a 0");
         }
     }
+
+    @Nested
+    class pruebasRepetidasTest {
+        @DisplayName("Probando Debito Cuenta Repetir!")
+        @RepeatedTest(value = 5, name = "{displayName} - Repeticion numero {currentRepetition}")
+        void test_debito_cuenta_repetido(RepetitionInfo info) {// Para usar la repiticon que vamos
+            if (info.getCurrentRepetition() == 2) {
+                System.out.println("Estamos en la repiticion: " + info.getCurrentRepetition());
+            }
+            // Given - teniendo una cuenta con saldo
+            // When - cuando descontamos un debito a nuestra cuenta
+            cuenta.debito(new BigDecimal("100"));
+            // Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el
+            // saldo
+            assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo");
+            assertEquals(4100, cuenta.getSaldo().intValue(), () -> "El saldo de la cuenta no es correcto");
+        }
+    }
 }
