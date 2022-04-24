@@ -10,6 +10,8 @@ import java.util.Properties;
 import com.curso.junit.udemy.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CuentaTest {
@@ -351,6 +353,25 @@ public class CuentaTest {
             // saldo
             assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo");
             assertEquals(4100, cuenta.getSaldo().intValue(), () -> "El saldo de la cuenta no es correcto");
+        }
+    }
+
+    @Nested
+    class PruebasParametrizadasTest {
+        @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
+        @DisplayName("Una cuenta puede gestionar un debito")
+        @ValueSource(strings = { "100", "200", "300", "500", "700", "1000" })
+        void test_debito_mayor_a_cero(String dato) {
+            // Given - teniendo una cuenta con saldo
+
+            // When - cuando descontamos un debito a nuestra cuenta
+            cuenta.debito(new BigDecimal(dato));
+            // Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el
+            // saldo
+            assertAll(
+                    () -> assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo"),
+                    () -> assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0,
+                            () -> "El saldo de la cuenta no es correcto"));
         }
     }
 }
