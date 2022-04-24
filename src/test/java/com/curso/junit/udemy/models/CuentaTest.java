@@ -6,11 +6,13 @@ import java.math.BigDecimal;
 
 import com.curso.junit.udemy.exceptions.DineroInsuficienteException;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class CuentaTest {
 
     @Test
+    @DisplayName("Una cuenta puede retornar el nombre")
     void test_nombre_cuenta() {
         Cuenta cuenta = new Cuenta("Luis", new BigDecimal("4200.23"));
         String esperado = "Luis";
@@ -20,6 +22,7 @@ public class CuentaTest {
     }
 
     @Test
+    @DisplayName("El saldo de una cuenta siempre es mayor o igual a cero")
     void saldo_cuenta() {
         Cuenta cuenta = new Cuenta("Luis", new BigDecimal("4200.23"));
         assertEquals(4200.23, cuenta.getSaldo().doubleValue(), () -> "El saldo de la cuenta no es el correcto");
@@ -30,7 +33,8 @@ public class CuentaTest {
     }
 
     @Test
-    void testReferenciaCuenta() {
+    @DisplayName("Una cuenta puede se comparada por valor")
+    void test_referencia_cuenta() {
         Cuenta cuenta1 = new Cuenta("John Doe", new BigDecimal("8900.9997"));
         Cuenta cuenta2 = new Cuenta("John Doe", new BigDecimal("8900.9997"));
 
@@ -46,7 +50,8 @@ public class CuentaTest {
     }
 
     @Test
-    void testDebitoCuenta() {
+    @DisplayName("Una cuenta puede gestionar un debito")
+    void test_debito_cuenta() {
         // Given - teniendo una cuenta con saldo
         Cuenta cuenta = new Cuenta("Luis", new BigDecimal("1000.17"));
         // When - cuando descontamos un debito a nuestra cuenta
@@ -58,6 +63,7 @@ public class CuentaTest {
     }
 
     @Test
+    @DisplayName("Una cuenta puede gestionar un credito")
     void testCreditoCuenta() {
         // Given - teniendo una cuenta con saldo
         Cuenta cuenta = new Cuenta("Luis", new BigDecimal("1000.17"));
@@ -71,6 +77,7 @@ public class CuentaTest {
     }
 
     @Test
+    @DisplayName("La cuenta puede generar un excepcion por saldo insuficiente")
     void testDineroInsuficienteException() {
         // Given - teniendo una cuenta con saldo
         Cuenta cuenta = new Cuenta("Luis", new BigDecimal("1000.17"));
@@ -85,7 +92,10 @@ public class CuentaTest {
     }
 
     @Test
+    @DisplayName("Se puede transferir saldo entre cuentas")
+    // @Disabled//Deshabilitar test en lo que solucionamos algo
     void testTrasferirDineroEntreCuentas() {
+        // fail();//Simula un fallo
         // Given - teniendo dos cuentas y un banco
         Cuenta cuenta1 = new Cuenta("John Doe", new BigDecimal("2500"));
         Cuenta cuenta2 = new Cuenta("Luis", new BigDecimal("1500.8989"));
@@ -102,6 +112,7 @@ public class CuentaTest {
     }
 
     @Test
+    @DisplayName("Una cuenta y un banco pueden relacionarse bidereccionalmente")
     void testRelacionBancoCuenta() {
         // Given - teniendo dos cuentas y un banco
         Banco banco = new Banco();
