@@ -397,6 +397,29 @@ public class CuentaTest {
 
         @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
         @DisplayName("Una cuenta puede gestionar un debito")
+        @CsvSource({ "200,100,Luis,Luis", "250,200,Yadira,Yadira", "301,300,Fernando,Fernando", "400,399,Chuy,Chuy",
+                "700,570,Andres,Andres",
+                "1000.12345,1000.12345,Jaz,Jaz" })
+        void test_debito_csv_source2(String saldo, String debito, String persona, String esperado) {
+            // Given - teniendo una cuenta con saldo
+            cuenta.setSaldo(new BigDecimal(saldo));
+            cuenta.setPersona(persona);
+            // When - cuando descontamos un debito a nuestra cuenta
+            cuenta.debito(new BigDecimal(debito));
+            // Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el
+            // saldo
+            assertAll(
+                    () -> assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo"),
+                    () -> assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) >= 0,
+                            () -> "El saldo de la cuenta no es correcto"),
+                    () -> assertNotNull(cuenta.getPersona(), () -> "El saldo de la cuenta no puede ser nulo"),
+                    () -> assertEquals(esperado, cuenta.getPersona(), () -> "El nombre de la persona no es el esperado")
+
+            );
+        }
+
+        @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
+        @DisplayName("Una cuenta puede gestionar un debito")
         @CsvFileSource(resources = "/data.csv")
         void test_debito_csvFile_source(String dato) {
             // Given - teniendo una cuenta con saldo
@@ -409,6 +432,27 @@ public class CuentaTest {
                     () -> assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo"),
                     () -> assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0,
                             () -> "El saldo de la cuenta no es correcto"));
+        }
+
+        @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
+        @DisplayName("Una cuenta puede gestionar un debito")
+        @CsvFileSource(resources = "/data2.csv")
+        void test_debito_csvFile_source2(String saldo, String debito, String persona, String esperado) {
+            // Given - teniendo una cuenta con saldo
+            cuenta.setSaldo(new BigDecimal(saldo));
+            cuenta.setPersona(persona);
+            // When - cuando descontamos un debito a nuestra cuenta
+            cuenta.debito(new BigDecimal(debito));
+            // Then - entonces asertamos que el saldo no sea nulo y si se haya agregado el
+            // saldo
+            assertAll(
+                    () -> assertNotNull(cuenta.getSaldo(), () -> "El saldo de la cuenta no puede ser nulo"),
+                    () -> assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) >= 0,
+                            () -> "El saldo de la cuenta no es correcto"),
+                    () -> assertNotNull(cuenta.getPersona(), () -> "El saldo de la cuenta no puede ser nulo"),
+                    () -> assertEquals(esperado, cuenta.getPersona(), () -> "El nombre de la persona no es el esperado")
+
+            );
         }
 
         @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
@@ -427,7 +471,7 @@ public class CuentaTest {
                             () -> "El saldo de la cuenta no es correcto"));
         }
 
-        private static List<String> montList(){
+        private static List<String> montList() {
             return Arrays.asList("100", "200", "300", "500", "700", "1000");
         }
     }
