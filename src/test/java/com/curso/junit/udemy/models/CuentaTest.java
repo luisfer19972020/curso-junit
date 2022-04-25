@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import com.curso.junit.udemy.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.*;
@@ -59,7 +61,7 @@ public class CuentaTest {
         @Test
         @DisplayName("Una cuenta puede retornar el nombre")
         void test_nombre_cuenta() {
-            testReporter.publishEntry(testInfo.getTags().contains("cuenta")+'');
+            testReporter.publishEntry("" + testInfo.getTags().contains("cuenta"));
             if (testInfo.getTags().contains("cuenta")) {
                 testReporter.publishEntry("Hacemos algo");
             }
@@ -492,6 +494,31 @@ public class CuentaTest {
 
         private static List<String> montList() {
             return Arrays.asList("100", "200", "300", "500", "700", "1000");
+        }
+    }
+
+    @Tag("timeout")
+    @Nested
+    class PruebasTimeOut {
+        @Test
+        @Timeout(1)
+        void prueba_timeout() throws InterruptedException {
+            TimeUnit.SECONDS.sleep(1);
+        }
+
+        @Test
+        @Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
+        void prueba_timeout2() throws InterruptedException {
+            TimeUnit.MILLISECONDS.sleep(499);
+        }
+
+        // Forma programatica
+        @Test
+        void prueba_timeoutAssertion() throws InterruptedException {
+
+            assertTimeout(Duration.ofMillis(100), () -> {
+                TimeUnit.MILLISECONDS.sleep(80);
+            });
         }
     }
 }
