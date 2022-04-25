@@ -21,11 +21,20 @@ import org.junit.jupiter.params.provider.ValueSource;
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CuentaTest {
     Cuenta cuenta;
+    private TestInfo testInfo;
+    private TestReporter testReporter;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach(TestInfo testInfo, TestReporter testReporter) {
         this.cuenta = new Cuenta("Luis", new BigDecimal("4200.23"));
+        // Para tener accesibles el testInfo y el testReporter en cada metodo
+        this.testInfo = testInfo;// testCada uno de estos objetos tendra info del metodo test
+        this.testReporter = testReporter;
         System.out.println("Iniciando el metodo de prueba");
+        System.out.println(
+                "Ejecuntando: " + testInfo.getDisplayName() + ", en el metodo: "
+                        + testInfo.getTestMethod().orElse(null).getName()
+                        + " con las etiquuetas: " + testInfo.getTags());
     }
 
     @AfterEach
@@ -50,6 +59,10 @@ public class CuentaTest {
         @Test
         @DisplayName("Una cuenta puede retornar el nombre")
         void test_nombre_cuenta() {
+            testReporter.publishEntry(testInfo.getTags().contains("cuenta")+'');
+            if (testInfo.getTags().contains("cuenta")) {
+                testReporter.publishEntry("Hacemos algo");
+            }
             String esperado = "Luis";
             String real = cuenta.getPersona();
             assertEquals(esperado, real, () -> "El nombre de la cuenta no es lo que se esperaba");
