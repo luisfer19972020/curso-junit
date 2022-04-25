@@ -43,6 +43,7 @@ public class CuentaTest {
         System.out.println("Cerrando la clase");
     }
 
+    @Tag("cuenta")
     @Nested
     @DisplayName("Los getters de cuenta se ejecutan correctamente")
     class CuentaSaldoTest {
@@ -140,6 +141,8 @@ public class CuentaTest {
     @DisplayName("Las operaciones de cuenta y banco se ejecutan correctamente")
     class CuentaBancoTest {
         @Test
+        @Tag("cuenta")
+        @Tag("banco")
         @DisplayName("Una cuenta y un banco pueden relacionarse bidereccionalmente")
         void test_relacion_banco_cuenta() {
             // Given - teniendo dos cuentas y un banco
@@ -207,6 +210,8 @@ public class CuentaTest {
         }
     }
 
+    @Tag("cuenta")
+    @Tag("error")
     @Nested
     class CuentaExcepcionesTest {
         @Test
@@ -361,6 +366,7 @@ public class CuentaTest {
         }
     }
 
+    @Tag("param")
     @Nested
     class PruebasParametrizadasTest {
         @ParameterizedTest(name = "Numero: {index} ejecutando el valor {0} - {argumentsWithNames}")
